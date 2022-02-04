@@ -11,5 +11,7 @@ router.get('/', function(req, res, next) {
 router.get('/api/admin/info', Admin.getAdminInfo);
 // 登录
 router.post('/api/admin/login', Admin.login);
+// 退出
+router.get('/api/admin/signout', Admin.signout);
 
 module.exports = router;
