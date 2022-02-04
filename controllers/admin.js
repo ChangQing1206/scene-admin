@@ -1,7 +1,8 @@
 var AdminModel = require('../models/admin')
 var crypto = require('crypto')
 var formidable = require('formidable')
-var dtime = require('time-formater')
+var dtime = require('time-formater');
+const e = require('express');
 
 
 class Admin {
@@ -15,7 +16,7 @@ class Admin {
     const {username, password, status = 1} = req.body;
     console.log("这是解构")
     console.log(username);
-
+// 验证参数
     try{
 				if (!username) {
 					throw new Error('用户名参数错误')
@@ -31,6 +32,7 @@ class Admin {
 				})
 				return
 			}
+			// 加密密码
 			const newpassword = this.encryption(password);
       console.log("这是加密后的密码");
       console.log(newpassword);
@@ -43,40 +45,34 @@ class Admin {
 				if (!admin) {
           console.log("该管理员不存在hhh");
 					const adminTip = status == 1 ? '管理员' : '超级管理员'
-          // 寻找最大的id  按照id字段降序且取一条
+					await AdminModel.find().count(async (err, count)=>{
+						if(!err) {
+							console.log(count);
+							const admin_id = (count == 0 ? 1 : count+1);
+							console.log(admin_id);
+							const newAdmin = {
+								_id: admin_id,
+								password: newpassword, 
+								username,
+								create_time: dtime().format('YYYY-MM-DD HH:mm'),
+								admin: adminTip,
+								status
+							}
+							console.log("新注册的用户");
+							console.log(newAdmin);
+							await AdminModel.create(newAdmin);
+							console.log(req.session);
+							console.log("**************")
+							
+							req.session.admin_id = admin_id;
+							console.log(req.session);
+							res.send({
+								status: 1,
+								success: '注册管理员成功',
+							});
 
-          var id = await AdminModel.find((err, docs) => {
-            if (!err) {
-                var max = 0;
-                for(var i = 0; i < docs.length; i++) {
-                  if(docs[i]._id > max) {
-                    max = docs[i]._id;
-                  }
-                }
-                return max++;
-            }
-          });
-          console.log("用户最大idddd");
-          console.log(id)
-          const admin_id = (id == 0 ? 1 : id);
-          
-          console.log(admin_id);
-					const newAdmin = {
-            _id: admin_id,
-						password: newpassword, 
-            username,
-						create_time: dtime().format('YYYY-MM-DD HH:mm'),
-						admin: adminTip,
-						status
-					}
-          console.log("新注册的用户");
-          console.log(newAdmin);
-					await AdminModel.create(newAdmin)
-					req.session.admin_id = admin_id;
-					res.send({
-						status: 1,
-						success: '注册管理员成功',
-					})
+						}
+					}).clone().catch(function(err) {console.log(err);});
 				}else if(newpassword.toString() != admin.password.toString()){
 					console.log('管理员登录密码错误');
 					res.send({
@@ -85,7 +81,10 @@ class Admin {
 						message: '该用户已存在，密码输入错误',
 					})
 				}else{
-					req.session.admin_id = admin.id;
+					console.log("@@@@@@@@@@@@@@@@@@@")
+					console.log(req.session);
+					req.session.admin_id = admin._id;
+					console.log(req.session);
 					res.send({
 						status: 1,
 						success: '登录成功'
@@ -125,9 +124,11 @@ class Admin {
 		}
 	}
   async getAdminInfo(req, res, next){
-		const admin_id = req.session.admin_id;  // 登录时返回
+		const admin_id = req.session.admin_id;  // 登录时设置
+		console.log("session id");
+		console.log(req.session);
 		if (!admin_id || !Number(admin_id)) {
-			// console.log('获取管理员信息的session失效');
+			// consoule.log('获取管理员信息的session失效');
 			res.send({
 				status: 0,
 				type: 'ERROR_SESSION',
@@ -136,7 +137,11 @@ class Admin {
 			return 
 		}
 		try{
-			const info = await AdminModel.findOne({id: admin_id}, '-_id -__v -password');
+			// const info = await AdminModel.findOne({_id: admin_id}, '-_id -__v -password');
+			const info = await AdminModel.findOne({_id: admin_id});
+			console.log("info:");
+			console.log(info);
+			console.log("session id 的数据库查询");
 			if (!info) {
 				throw new Error('未找到当前管理员')
 			}else{
