@@ -17,6 +17,7 @@ app.all('*', (req, res, next) => {
   const { origin, Origin, referer, Referer } = req.headers;
   const allowOrigin = origin || Origin || referer || Referer || '*';
 	res.header("Access-Control-Allow-Origin", allowOrigin);
+	// res.header("Access-Control-Allow-Origin", "http://localhost:8081");
 	res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
 	res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
 	res.header("Access-Control-Allow-Credentials", true); //可以带cookies
@@ -32,7 +33,7 @@ var session_config = {
 	name: 'SID',
 	secret: 'SID',
 	cookie: {
-		httpOnly: true,
+		// httpOnly: true,
 		secure:   false,
 		maxAge:   365 * 24 * 60 * 60 * 1000,
 	}
@@ -41,8 +42,8 @@ var session_config = {
 app.use(session({
   name: session_config.name,
 	secret: session_config.secret,
-	resave: true,
-	saveUninitialized: false,
+	resave: false,
+	saveUninitialized: true,
 	cookie: session_config.cookie
 	// store: new MongoStore({
   //   url: config.url
