@@ -59,11 +59,13 @@ server.on('published', function(packet, client) {
   console.log("Published: ", data);
   try {
     data = JSON.parse(data); 
-  // 插入数据库
-    test.collection("mos_test").insertOne(data, function (err, res) {
-      if(err) throw err;
-      console.log("插入成功");
-    })
+    if(data.name) {
+      // 插入数据库
+      test.collection("mos_test").insertOne(data, function (err, res) {
+        if(err) throw err;
+        console.log("插入成功");
+      })
+    }
   } catch(err) {
 	// throw err;
     console.log("这不是主要内容")
