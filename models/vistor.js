@@ -9,12 +9,12 @@ const vistorSchema = new Schema({
 	deposit: Number,
   consume: Number,
   goodsName: String,
-  positionLong: Number,
-  positionLati: Number,
-  date: Date
+  position: Array,
+  date: String,
+  sceneVisited: String
 })
-
-// adminSchema.index({id: 1});
+// 为name建立索引 方面扩展按姓名查询游客信息功能
+vistorSchema.index({name: 1});
 
 const Vistor = mongoose.model('Vistor', vistorSchema);
 

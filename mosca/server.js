@@ -1,6 +1,6 @@
 // mosca 服务端
 var mosca = require('mosca')
-
+var VistorModel = require('../models/vistor');
 /* 不使用ascoltarori作为数据库 原因如下
 1.它实现是使用了mongo的固定集合，固定集合的特点有3：第一固定容量 第二固定文档数 第三超出固定文档数最新的数据将覆盖最旧的
 2.固定集合适用存储日志等，所以直接使用mongo的正常操作，只要将server暴露出去
