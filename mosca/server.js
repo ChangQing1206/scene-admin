@@ -61,10 +61,17 @@ server.on('published', function(packet, client) {
     data = JSON.parse(data); 
     if(data.name) {
       // 插入数据库
-      test.collection("mos_test").insertOne(data, function (err, res) {
-        if(err) throw err;
+      // test.collection("mos_test").insertOne(data, function (err, res) {
+      //   if(err) throw err;
+      //   console.log("插入成功");
+      // })
+      try {
+        await VistorModel.create(data);
         console.log("插入成功");
-      })
+      }
+      catch (err) {
+        console.log("mqtt服务器插入失败");
+      }
     }
   } catch(err) {
 	// throw err;

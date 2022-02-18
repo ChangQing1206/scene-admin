@@ -6,9 +6,9 @@ const vistorSchema = new Schema({
   clientId: String,
 	name: String,
 	bodyTem: Number,
-	deposit: Number,
-  consume: Number,
-  goodsName: String,
+	// deposit: Number,
+  // consume: Number,
+  // goodsName: String,
   position: Array,
   date: String,
   sceneVisited: String
