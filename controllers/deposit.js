@@ -13,7 +13,16 @@ class Deposit {
     
   }
   async createDeposit(req, res, next) {
-    
+    // 注意：这里的逻辑是：售票系统将
+    // 1.req.body = {clientId:1, name:'tom', deposit: 100, dateTime: 2022-02-01 11:20, status: "充值成功"}
+    try{
+      await DepositModel.create(req.body);
+      res.send({
+        status: 1
+      })
+    } catch(err) {
+      console.log(err);
+    }
   }
   async getDeposits(req, res, next) {
 
@@ -22,6 +31,6 @@ class Deposit {
 
   }
   async getDepositsCount(req, res, next) {
-    
+
   }
 }

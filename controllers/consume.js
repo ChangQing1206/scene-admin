@@ -14,7 +14,8 @@ class Consume {
     this.goodsAnalyse = this.goodsAnalyse.bind(this);
   }
   async createOrder(req, res, next) {
-    
+    // req.body = {}
+    ConsumeModel.create()
   }
   async getOrders(req, res, next) {
 
