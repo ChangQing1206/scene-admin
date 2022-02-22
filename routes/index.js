@@ -49,4 +49,8 @@ router.get('/api/admin/signout', Admin.signout);
 
 // 创建门票
 router.post('/api/ticket/createTicket', Ticket.createTicket);
+// 获取门票信息
+router.get('/api/ticket/getTickets', Ticket.getTickets);
+// 获取门票数量
+router.get('/api/ticket/getTicketsCount', Ticket.getTicketsCount);
 module.exports = router;
