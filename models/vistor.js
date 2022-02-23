@@ -1,20 +1,16 @@
 var mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-
+// 没有id选项，没必要
 const vistorSchema = new Schema({
-  clientId: String,
+  identity: String,
 	name: String,
 	bodyTem: Number,
-	// deposit: Number,
-  // consume: Number,
-  // goodsName: String,
   position: Array,
-  date: String,
-  sceneVisited: String
+  date_time: String
 })
-// 为name建立索引 方面扩展按姓名查询游客信息功能
-vistorSchema.index({name: 1});
+// 为identity建立索引 方面扩展按身份证查询游客信息功能
+vistorSchema.index({identity: 1});
 
 const Vistor = mongoose.model('Vistor', vistorSchema);
 
