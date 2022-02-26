@@ -13,7 +13,7 @@ class Vistor {
     // this.updateScene = this.updateScene.bind(this);
     // // 游客位置分析
     // this.posAnalyse = this.posAnalyse.bind(this);
-  }
+  } 
   async getVistors(req, res, next) {
     // 解构出 偏移量 和 一页数据
     const {offset, limit} = req.body;
