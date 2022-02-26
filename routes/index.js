@@ -23,6 +23,8 @@ router.post('/api/vistor/getVistors', Vistor.getVistors);
 router.get('/api/vistor/getVistorsCount', Vistor.getVistorsCount);
 // 删除游客
 router.post('/api/vistor/deleteVistor', Vistor.deleteVistor);
+// 获取游客id
+router.get('/api/vistor/getClientId', Vistor.getClientId);
 // // 更新游客去过的景点
 // router.post('/api/vistor/updateScene', Vistor.updateScene);
 // // 增加游客消费记录
@@ -53,4 +55,6 @@ router.post('/api/ticket/createTicket', Ticket.createTicket);
 router.get('/api/ticket/getTickets', Ticket.getTickets);
 // 获取门票数量
 router.get('/api/ticket/getTicketsCount', Ticket.getTicketsCount);
+// 游客充值
+router.post('/api/deposit/increaseDeposit', Deposit.increaseDeposit);
 module.exports = router;
