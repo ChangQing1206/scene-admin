@@ -16,12 +16,8 @@ class Deposit {
     // 注意：这里的逻辑是：充值系统将
     // 1.req.body = {name:'tom', identity: '', deposit: 100, dateTime: 2022-02-01 11:20, status: "充值成功"}
     console.log(req.body);
-    const {name, identity, deposit} = req.body;
+    const {name, identity, deposit, status} = req.body;
     var dateTime = dtime().format('YYYY-MM-DD HH:mm');
-    var status;
-    if(name && identity && deposit) {
-      status = "充值成功";
-    }else { status = "充值失败" }
     var deposit_record = {
       name: name,
       identity: identity,
@@ -63,18 +59,20 @@ class Deposit {
     try {
       var record = await DepositModel.aggregate([{
         $group: {
-          _id: identity,
+          _id: "$identity",
           name: {$first: "$name"}, // 姓名
           dateTime: {$push: "$dateTime"},
           deposit: {$push: "$deposit"},
           status: {$push: "$status"}
         }
-      }]).skip(offset).limit(limit)
+      }]).skip(Number(offset)).limit(Number(limit));
+      console.log(record)
       res.send({
         status: 1,
         data: record
       })
     } catch(err) {
+      console.log(err);
       res.send({
         status: 0,
         error: err

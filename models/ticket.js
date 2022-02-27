@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ticketSchema = new Schema({
+	clientId: String, // 考虑到游客毁坏设备的可能  clientId就有必要
 	_id: String,  // 身份证作为id
 	name: String, // 姓名
 	bodyTem: String, // 体温

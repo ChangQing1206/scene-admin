@@ -24,7 +24,7 @@ router.get('/api/vistor/getVistorsCount', Vistor.getVistorsCount);
 // 删除游客
 router.post('/api/vistor/deleteVistor', Vistor.deleteVistor);
 // 获取游客id
-router.get('/api/vistor/getClientId', Vistor.getClientId);
+router.get('/api/vistor/getClientId', Ticket.getClientId);
 // // 更新游客去过的景点
 // router.post('/api/vistor/updateScene', Vistor.updateScene);
 // // 增加游客消费记录
@@ -37,12 +37,12 @@ router.get('/api/vistor/getClientId', Vistor.getClientId);
 // router.get('/api/vistor/getOrdersCount', Consume.getOrdersCount);
 // // 增加游客充值记录
 // router.get('/api/vistor/createDeposit', Deposit.createDeposit);
-// // 按顺序查询充值记录
-// router.get('/api/vistor/getDeposits', Deposit.getDeposits);
-// // 按照游客查询充值记录
-// router.get('/api/vistor/getClientDeposits', Deposit.getClientDeposits);
-// // 获取按顺序充值记录的数量
-// router.get('/api/vistor/getDepositsCount', Deposit.getDepositsCount);
+// 按顺序查询充值记录
+router.get('/api/vistor/getDeposits', Deposit.getDeposits);
+// 按照游客查询充值记录
+router.get('/api/vistor/getClientDeposits', Deposit.getClientDeposits);
+// 获取按顺序充值记录的数量
+router.get('/api/vistor/getDepositsCount', Deposit.getDepositsCount);
 // // 游客位置分析
 // router.get('/api/vistor/analyse/position', Vistor.posAnalyse);
 // // 游客消费分析

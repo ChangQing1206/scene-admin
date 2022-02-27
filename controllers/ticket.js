@@ -5,10 +5,12 @@ class Ticket {
     this.createTicket = this.createTicket.bind(this);
     this.getTickets = this.getTickets.bind(this);
     this.getTicketsCount = this.getTicketsCount.bind(this);
+    this.getClientId = this.getClientId.bind(this);
   }
   async createTicket(req, res, next) {
     var ticket = {
       _id: req.body.identity,
+      clientId: req.body.clientId,
       name: req.body.name,
       bodyTem: req.body.bodyTem,
       create_time: dtime().format('YYYY-MM-DD HH:mm'),
@@ -79,6 +81,23 @@ class Ticket {
       res.send({
         status: '0',
         err: err
+      })
+    }
+  }
+
+
+  async getClientId(req, res, next) {
+    var {name, identity} = req.query;
+    try {
+      var vistor = await TicketModel.findOne({name: name, _id: identity});
+      res.send({
+        status: 1,
+        clientId: vistor.clientId
+      })
+    }catch (err) {
+      res.send({
+        status: 0,
+        error: err
       })
     }
   }

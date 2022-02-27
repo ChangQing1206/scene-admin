@@ -13,8 +13,8 @@ class Vistor {
     // this.updateScene = this.updateScene.bind(this);
     // // 游客位置分析
     // this.posAnalyse = this.posAnalyse.bind(this);
-    // 获取游客Id
-    this.getClientId = this.getClientId.bind(this);
+  
+    
   } 
   async getVistors(req, res, next) {
     // 解构出 偏移量 和 一页数据
@@ -126,21 +126,7 @@ class Vistor {
     }
   }
 
-  async getClientId(req, res, next) {
-    var {name, identity} = req.query;
-    try {
-      var vistor = await VistorModel.findOne({name: name, identity: identity});
-      res.send({
-        status: 1,
-        clientId: vistor.clientId
-      })
-    }catch (err) {
-      res.send({
-        status: 0,
-        error: err
-      })
-    }
-  }
+
 
 
 
