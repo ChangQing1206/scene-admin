@@ -14,8 +14,28 @@ class Consume {
     this.goodsAnalyse = this.goodsAnalyse.bind(this);
   }
   async createOrder(req, res, next) {
-    // req.body = {}
-    ConsumeModel.create()
+    console.log(req.body);
+    const {name, identity, consume, status, goods} = req.body;
+    var dateTime = dtime().format('YYYY-MM-DD HH:mm');
+    var consume_record = {
+      name: name,
+      identity: identity,
+      consume: consume,
+      dateTime: dateTime,
+      status: status,
+      goods: goods
+    }
+    try{
+      await ConsumeModel.create(consume_record);
+      res.send({
+        status: 1
+      })
+    }catch (err) {
+      res.send({
+        status: 0,
+        error: err
+      })
+    }
   }
   async getOrders(req, res, next) {
 
@@ -30,3 +50,5 @@ class Consume {
 
   }
 }
+
+module.exports = new Consume()

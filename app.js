@@ -6,7 +6,7 @@ var logger = require('morgan');
 // 使用session 
 var session = require('express-session');
 var db = require('./mongodb/db');
-
+const jwt = require("./jwt/jwt")
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -38,6 +38,9 @@ var session_config = {
 		maxAge:   365 * 24 * 60 * 60 * 1000,
 	}
 } 
+
+// token验证
+app.use(jwt.jwtAuth)
 
 app.use(session({
   name: session_config.name,

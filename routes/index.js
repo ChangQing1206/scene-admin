@@ -14,6 +14,8 @@ router.get('/', function(req, res, next) {
 router.get('/api/admin/info', Admin.getAdminInfo);
 // 登录
 router.post('/api/admin/login', Admin.login);
+// 注册
+router.post('/api/admin/register', Admin.register);
 // 退出
 router.get('/api/admin/signout', Admin.signout);
 
@@ -27,16 +29,15 @@ router.post('/api/vistor/deleteVistor', Vistor.deleteVistor);
 router.get('/api/vistor/getClientId', Ticket.getClientId);
 // // 更新游客去过的景点
 // router.post('/api/vistor/updateScene', Vistor.updateScene);
-// // 增加游客消费记录
-// router.post('/api/vistor/createOrder', Consume.createOrder);
+// 增加游客消费记录
+router.post('/api/consume/createOrder', Consume.createOrder);
 // // 按顺序查询消费记录
 // router.get('/api/vistor/getOrders', Consume.getOrders);
 // // 按照游客查询消费记录
 // router.get('/api/vistor/getClientOrders', Consume.getClientOrders);
 // // 获取按顺序消费记录的数量
 // router.get('/api/vistor/getOrdersCount', Consume.getOrdersCount);
-// // 增加游客充值记录
-// router.get('/api/vistor/createDeposit', Deposit.createDeposit);
+
 // 按顺序查询充值记录
 router.get('/api/vistor/getDeposits', Deposit.getDeposits);
 // 按照游客查询充值记录
@@ -57,4 +58,6 @@ router.get('/api/ticket/getTickets', Ticket.getTickets);
 router.get('/api/ticket/getTicketsCount', Ticket.getTicketsCount);
 // 游客充值
 router.post('/api/deposit/increaseDeposit', Deposit.increaseDeposit);
+// 验票
+router.post('/api/ticket/checkTicket', Ticket.checkTicket);
 module.exports = router;

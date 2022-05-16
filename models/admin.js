@@ -9,8 +9,8 @@ const adminSchema = new Schema({
 	password: String,
 	username: String,
 	create_time: String,
-	admin: {type: String, default: '管理员'},
-	status: Number  //1:普通管理、 2:超级管理员
+	role: String,    // 角色
+	power: String    // 权限
 })
 
 adminSchema.index({id: 1});

@@ -6,16 +6,16 @@ class Ticket {
     this.getTickets = this.getTickets.bind(this);
     this.getTicketsCount = this.getTicketsCount.bind(this);
     this.getClientId = this.getClientId.bind(this);
+    this.checkTicket = this.checkTicket.bind(this);
   }
   async createTicket(req, res, next) {
     var ticket = {
       _id: req.body.identity,
-      clientId: req.body.clientId,
+      client_id: req.body.client_id,
       name: req.body.name,
-      bodyTem: req.body.bodyTem,
       create_time: dtime().format('YYYY-MM-DD HH:mm'),
-      position: req.body.position,
-      status: req.body.status
+      status: req.body.status,
+      deposit: req.body.deposit
     }
     console.log(ticket)
     try{
@@ -93,6 +93,22 @@ class Ticket {
       res.send({
         status: 1,
         clientId: vistor.clientId
+      })
+    }catch (err) {
+      res.send({
+        status: 0,
+        error: err
+      })
+    }
+  }
+ //  验票接口
+  async checkTicket(req, res, next) {
+    var {name, identity, status} = req.body
+    try {
+      var vistor = await TicketModel.findOne({name: name, _id: identity});
+      vistor.status = status;
+      res.send({
+        status: 1
       })
     }catch (err) {
       res.send({

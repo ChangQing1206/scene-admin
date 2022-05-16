@@ -25,6 +25,7 @@ var VistorModel = require('../models/vistor');
 // var server = new mosca.Server(moscaSettings);
 // 实例化服务器
 var server = new mosca.Server({
+  
   http: {
     port: 3010,
     bundle: true,

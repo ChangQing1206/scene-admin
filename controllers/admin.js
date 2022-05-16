@@ -3,6 +3,7 @@ var crypto = require('crypto')
 var formidable = require('formidable')
 var dtime = require('time-formater');
 const e = require('express');
+const jwt = require("../jwt/jwt")
 
 
 class Admin {
@@ -13,8 +14,8 @@ class Admin {
   // 如果用户未登录将直接注册并登录
   async login(req, res, next){
     console.log(req.body);
-    const {username, password, status = 1} = req.body;
-    console.log("这是解构")
+    //const {username, password, status = 1} = req.body;
+		const {username, password} = req.body;
     console.log(username);
 // 验证参数
     try{
@@ -33,60 +34,42 @@ class Admin {
 				return
 			}
 			// 加密密码
-			const newpassword = this.encryption(password);
-      console.log("这是加密后的密码");
-      console.log(newpassword);
-      try{
-        console.log("开始数据库操作")
-				const admin = await AdminModel.findOne({username})
-        console.log("数据库操作完成")
-        console.log(admin);
-        // 如果未找到用户，将新建用户
-				if (!admin) {
-          console.log("该管理员不存在hhh");
-					const adminTip = status == 1 ? '管理员' : '超级管理员'
-					await AdminModel.find().count(async (err, count)=>{
-						if(!err) {
-							console.log(count);
-							const admin_id = (count == 0 ? 1 : count+1);
-							console.log(admin_id);
-							const newAdmin = {
-								_id: admin_id,
-								password: newpassword, 
-								username,
-								create_time: dtime().format('YYYY-MM-DD HH:mm'),
-								admin: adminTip,
-								status
-							}
-							console.log("新注册的用户");
-							console.log(newAdmin);
-							await AdminModel.create(newAdmin);
-							console.log(req.session);
-							console.log("**************")
-							
-							req.session.admin_id = admin_id;
-							console.log(req.session);
-							res.send({
-								status: 1,
-								success: '注册管理员成功',
-							});
 
-						}
-					}).clone().catch(function(err) {console.log(err);});
-				}else if(newpassword.toString() != admin.password.toString()){
+
+      try{
+				const admin = await AdminModel.findOne({username})
+        console.log(admin);
+				// 密码错误
+        if(password != admin.password.toString()){
 					console.log('管理员登录密码错误');
 					res.send({
 						status: 0,
 						type: 'ERROR_PASSWORD',
-						message: '该用户已存在，密码输入错误',
+						message: '管理员登录密码错误',
 					})
 				}else{
-					console.log("@@@@@@@@@@@@@@@@@@@")
-					console.log(req.session);
-					req.session.admin_id = admin._id;
-					console.log(req.session);
+					// console.log(req.session);
+					// req.session.admin_id = admin._id;
+					// console.log(req.session);
+					// 进行token生成
+					let tokenExpiresTime = 1000 * 60 * 60 * 24 * 7; // token有效时间
+					let payload = {
+						user: username,
+						expires: Date.now() + tokenExpiresTime,
+						role: admin.role,
+						power: admin.power,
+						id: admin._id
+					}
+					console.log(admin)
+					let mytoken = jwt.createToken(payload)
 					res.send({
 						status: 1,
+						// 返回角色、权限和token
+						message: {
+							role: admin.role,
+							power: admin.power,
+							token: mytoken
+						},
 						success: '登录成功'
 					})
 				}
@@ -100,6 +83,78 @@ class Admin {
 			}
 
 	}
+	async register(req, res, next) {
+		const {username, password, role, token} = req.body
+		// 如果未找到用户，将新建用户
+		try{
+			const admin = await AdminModel.findOne({username})
+			if (!admin) {
+				let adminTip;
+				let power;
+				if(role === 1) {
+					adminTip = "游客"
+				}else if(role === 2) {
+					adminTip = "商家"
+					if(token != "sjhxwtoken") {
+						res.send({
+							status: 0,
+							message: "你的商家注册码错误"
+						})
+						return;
+					}
+					power = "sj"
+				}else if(role === 3) {
+					adminTip = "管理员"
+					if(token != "adminhxwtoken") {
+						res.send({
+							status: 0,
+							message: "你的管理员注册码错误"
+						})
+						return;
+					}
+					power = "admin"
+				}
+				await AdminModel.find().count(async (err, count)=>{
+					if(!err) {
+						console.log(count);
+						const admin_id = (count == 0 ? 1 : count+1);  
+						console.log(admin_id); // 注册的人数
+						const newAdmin = {
+							_id: admin_id,
+							password: password, 
+							username: username,
+							create_time: dtime().format('YYYY-MM-DD HH:mm'),
+							role: adminTip, // 角色
+							power: power     // 权限
+						}
+						console.log("新注册的用户");
+						console.log(newAdmin);
+						await AdminModel.create(newAdmin);
+						// console.log(req.session);
+						console.log("**************")
+						
+						// req.session.admin_id = admin_id;
+						// console.log(req.session);
+						res.send({
+							status: 1,
+							success: '注册' + adminTip + '成功',
+						});
+
+					}
+				}).clone().catch(function(err) {console.log(err);});
+			}else {
+				res.send({
+					status: 0,
+					message: "该用户已经存在，请更换用户名"
+				})
+			}
+		}catch (err) {
+			res.send({
+				status: 0,
+				message: "服务器错误"
+			})
+		}
+	}
   encryption(password){
 		const newpassword = this.Md5(this.Md5(password).substr(2, 7) + this.Md5(password));
 		return newpassword
@@ -111,7 +166,6 @@ class Admin {
 
   async signout(req, res, next){
 		try{
-			delete req.session.admin_id;
 			res.send({
 				status: 1,
 				success: '退出成功'
@@ -126,38 +180,18 @@ class Admin {
 	}
 
   async getAdminInfo(req, res, next){
-		const admin_id = req.session.admin_id;  // 登录时设置
-		console.log("session id");
-		console.log(req.session);
-		if (!admin_id || !Number(admin_id)) {
-			// consoule.log('获取管理员信息的session失效');
+		if(req.auth) {
 			res.send({
-				status: 0,
-				type: 'ERROR_SESSION',
-				message: '获取管理员信息失败'
+				status: 1,
+				message: {
+					user: req.auth.user,
+					role: req.auth.role
+				}
 			})
-			return 
-		}
-		try{
-			// const info = await AdminModel.findOne({_id: admin_id}, '-_id -__v -password');
-			const info = await AdminModel.findOne({_id: admin_id});
-			console.log("info:");
-			console.log(info);
-			console.log("session id 的数据库查询");
-			if (!info) {
-				throw new Error('未找到当前管理员')
-			}else{
-				res.send({
-					status: 1,
-					data: info
-				})
-			}
-		}catch(err){
-			console.log('获取管理员信息失败');
+		}else {
 			res.send({
 				status: 0,
-				type: 'GET_ADMIN_INFO_FAILED',
-				message: '获取管理员信息失败'
+				message: "获取用户信息失败"
 			})
 		}
 	}
