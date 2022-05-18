@@ -5,6 +5,7 @@ var Vistor = require('../controllers/vistor');
 var Consume = require('../controllers/consume');
 var Deposit = require('../controllers/deposit');
 var Ticket = require('../controllers/ticket');
+var Goods = require('../controllers/goods')
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -31,12 +32,11 @@ router.get('/api/vistor/getClientId', Ticket.getClientId);
 // router.post('/api/vistor/updateScene', Vistor.updateScene);
 // 增加游客消费记录
 router.post('/api/consume/createOrder', Consume.createOrder);
-// // 按顺序查询消费记录
-// router.get('/api/vistor/getOrders', Consume.getOrders);
+// 按顺序查询消费记录
+router.get('/api/vistor/getOrders', Consume.getOrders);
 // // 按照游客查询消费记录
 // router.get('/api/vistor/getClientOrders', Consume.getClientOrders);
-// // 获取按顺序消费记录的数量
-// router.get('/api/vistor/getOrdersCount', Consume.getOrdersCount);
+
 
 // 按顺序查询充值记录
 router.get('/api/vistor/getDeposits', Deposit.getDeposits);
@@ -46,10 +46,16 @@ router.get('/api/vistor/getClientDeposits', Deposit.getClientDeposits);
 router.get('/api/vistor/getDepositsCount', Deposit.getDepositsCount);
 // // 游客位置分析
 // router.get('/api/vistor/analyse/position', Vistor.posAnalyse);
-// // 游客消费分析
-// router.get('/api/vistor/analyse/goods', Consume.goodsAnalyse);
-
-
+// 游客消费分析
+router.post('/api/vistor/analyse/goods', Consume.goodsAnalyse);
+// 查询商品
+router.get('/api/goods/getGoods', Goods.getGoods);
+// 商家添加商品
+router.post('/api/goods/addGoods', Goods.addGoods); 
+// 编辑商品
+router.get('/api/goods/editGoods', Goods.editGoods); 
+// 商家删除商品
+router.post('/api/goods/delGoods', Goods.delGoods); 
 // 创建门票
 router.post('/api/ticket/createTicket', Ticket.createTicket);
 // 获取门票信息
@@ -60,4 +66,5 @@ router.get('/api/ticket/getTicketsCount', Ticket.getTicketsCount);
 router.post('/api/deposit/increaseDeposit', Deposit.increaseDeposit);
 // 验票
 router.post('/api/ticket/checkTicket', Ticket.checkTicket);
+
 module.exports = router;

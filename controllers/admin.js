@@ -14,7 +14,6 @@ class Admin {
   // 如果用户未登录将直接注册并登录
   async login(req, res, next){
     console.log(req.body);
-    //const {username, password, status = 1} = req.body;
 		const {username, password} = req.body;
     console.log(username);
 // 验证参数
@@ -48,9 +47,6 @@ class Admin {
 						message: '管理员登录密码错误',
 					})
 				}else{
-					// console.log(req.session);
-					// req.session.admin_id = admin._id;
-					// console.log(req.session);
 					// 进行token生成
 					let tokenExpiresTime = 1000 * 60 * 60 * 24 * 7; // token有效时间
 					let payload = {
@@ -130,11 +126,7 @@ class Admin {
 						console.log("新注册的用户");
 						console.log(newAdmin);
 						await AdminModel.create(newAdmin);
-						// console.log(req.session);
-						console.log("**************")
 						
-						// req.session.admin_id = admin_id;
-						// console.log(req.session);
 						res.send({
 							status: 1,
 							success: '注册' + adminTip + '成功',
