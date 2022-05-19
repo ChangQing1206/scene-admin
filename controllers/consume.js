@@ -11,6 +11,8 @@ class Consume {
     this.getClientOrders = this.getClientOrders.bind(this);
     // 商品分析
     this.goodsAnalyse = this.goodsAnalyse.bind(this);
+    // 删除记录
+    this.delConsume = this.delConsume.bind(this);
   }
   async createOrder(req, res, next) {
     console.log(req.body);
@@ -22,7 +24,8 @@ class Consume {
       consume: consume,
       dateTime: dateTime,
       status: status,
-      goods: goods
+      goods: goods,
+      orderNum: String(Math.sin(Math.random() * Math.PI)).slice(2, 12)
     }
 
     try{
@@ -75,10 +78,12 @@ class Consume {
   async getOrders(req, res, next) {
     const { offset, limit } = req.query;
     try {
+      const length = await ConsumeModel.find(null, {_id: 0});
       const data = await ConsumeModel.find().skip(offset).limit(limit);
       res.send({
         status: 1,
-        message: data
+        message: data,
+        count: length.length
       })
     }catch(err) {
       res.send({
@@ -94,7 +99,63 @@ class Consume {
   }
 
   async goodsAnalyse(req, res, next) {
-
+    // 食物名： 食物数量
+    try {
+      const result = await ConsumeModel.find();
+      var foodName = [];
+      var food_price = [];
+      var obj = {};
+      for(var i = 0; i < result.length; i++) {
+        var o = result[i].goods;
+        for(var j = 0; j < o.length; j++) {
+          foodName.push(o[j].foodName);
+          food_price.push({
+            name: o[j].foodName,
+            value: o[j].number
+          })
+          // 如果这个键存在
+          if(obj[o[j].foodType]) {
+            console.log(o[j].food)
+            obj[o[j].foodType] = obj[o[j].foodType] + o[j].number
+          }else {
+            obj[o[j].foodType] = o[j].number
+          }
+        }
+      }
+      console.log(obj)
+      // 按类别统计数量
+      
+      res.send({
+        status: 1,
+        message: {
+          foodName: foodName,
+          food_price: food_price,
+          food_type: obj
+        }
+      })
+    }catch(err) {
+      console.log(err);
+      res.send({
+        status: 0,
+        error: "分析失败"
+      })
+    }
+  }
+  async delConsume(req, res, next) {
+    console.log(req.body)
+    try{
+      const result = await ConsumeModel.deleteOne({"orderNum": req.body.orderNum});
+      res.send({
+        status: 1,
+        message: "删除成功"
+      })
+    } catch(err) {
+      console.log(err);
+      res.send({
+        status: 0,
+        error: "删除失败"
+      })
+    }
   }
 }
 

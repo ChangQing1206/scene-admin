@@ -16,6 +16,7 @@ class Goods {
   }
   async getGoods(req, res, next) {
     // 按商品类型聚合
+    
     try {
       const _data = await GoodsModel.aggregate([
         {
@@ -33,6 +34,7 @@ class Goods {
           }
         }
       ])
+      console.log(_data)
       
       res.send({
         status: 1,
@@ -99,10 +101,14 @@ class Goods {
   async editGoods(req, res, next) {
     const { offset, limit } = req.query;
     try {
+      const length = await GoodsModel.find(null, {_id: 0});
+      
       const data = await GoodsModel.find(null, {_id: 0}).skip(offset).limit(limit);
+      console.log(data)
       res.send({
         status: 1,
-        message: data
+        message: data,
+        count: length.length
       })
     }catch (err) {
       console.log(err)

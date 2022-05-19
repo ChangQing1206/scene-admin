@@ -32,6 +32,9 @@ router.get('/api/vistor/getClientId', Ticket.getClientId);
 // router.post('/api/vistor/updateScene', Vistor.updateScene);
 // 增加游客消费记录
 router.post('/api/consume/createOrder', Consume.createOrder);
+
+// 删除游客消费记录
+router.post('/api/consume/delConsume', Consume.delConsume);
 // 按顺序查询消费记录
 router.get('/api/vistor/getOrders', Consume.getOrders);
 // // 按照游客查询消费记录
@@ -47,7 +50,7 @@ router.get('/api/vistor/getDepositsCount', Deposit.getDepositsCount);
 // // 游客位置分析
 // router.get('/api/vistor/analyse/position', Vistor.posAnalyse);
 // 游客消费分析
-router.post('/api/vistor/analyse/goods', Consume.goodsAnalyse);
+router.get('/api/vistor/analyse/goods', Consume.goodsAnalyse);
 // 查询商品
 router.get('/api/goods/getGoods', Goods.getGoods);
 // 商家添加商品
